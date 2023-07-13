@@ -1,6 +1,7 @@
 # ************************ Written by Alireza ************************************
 import numpy as np
 import time
+import torch
 
 # Define the matrix sizes
 matrix_size = 1000
@@ -23,10 +24,11 @@ def gpu_matrix_multiplication(matrix_a, matrix_b):
     start_time = time.time()
 
     # Perform matrix multiplication using GPU
-    gpu_matrix_a = cp.asarray(matrix_a)
-    gpu_matrix_b = cp.asarray(matrix_b)
-    gpu_result = cp.dot(gpu_matrix_a, gpu_matrix_b)
-    cpu_result = cp.asnumpy(gpu_result)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    tensor_a = torch.FloatTensor(matrix_a).to(device)
+    tensor_b = torch.FloatTensor(matrix_b).to(device)
+    tensor_result = torch.mm(tensor_a, tensor_b)
+    cpu_result = tensor_result.cpu().numpy()
 
     end_time = time.time()
     execution_time = end_time - start_time
